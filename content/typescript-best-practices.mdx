@@ -1,41 +1,131 @@
 ---
 title: "TypeScript Best Practices for Clean, Maintainable Code"
-publishedAt: "2024-12-08"
-updatedAt: "2024-12-08"
-author: "John Doe"
-summary: "Essential TypeScript patterns and practices that will make your codebase more robust and easier to maintain."
-image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=192&fit=crop"
+publishedAt: "2025-08-25"
+updatedAt: "2024-11-08"
+author: "Peeush Gupta"
+summary: "Practical TypeScript techniques for writing predictable, type-safe code that stays readable, scales well, and doesn’t turn into maintenance hell."
+image: "https://images.unsplash.com/photo-1637855191735-85baaccab810?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0"
 ---
 
 # TypeScript Best Practices for Clean, Maintainable Code
 
-TypeScript shines when it helps you model reality — not when it forces you to fight types all day. A few small defaults can make a codebase feel <mark>calmer, safer, and easier to refactor</mark>.
+TypeScript works best when it reduces ambiguity, not when it adds ceremony. The goal isn’t to type everything — it’s to make wrong code hard to write and correct code easy to change. A few disciplined defaults can turn a messy JavaScript project into a calm, predictable system.
 
 <MediaContainer
-  src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&fit=crop"
-  alt="TypeScript code on screen"
+src="https://images.unsplash.com/photo-1690585703267-de31ea667ef0?q=80&w=1171&auto=format&fit=crop"
+alt="TypeScript code on screen"
 />
 
-## Practical rules of thumb
+## Rules that actually pay off
 
-- Turn on strictness and fix the sharp edges early.
-- Prefer readable types over clever types.
-- Use unions for “one of these”, interfaces for “shape of this”.
-- Avoid `any` as a shortcut; it becomes ~~future debt~~ fast.
+* Enable `strict` mode on day one. Fixing types late is always more expensive.
+* Prefer obvious, boring types over clever, compressed ones.
+* Add explicit return types to public functions and APIs.
+* Use `unknown` instead of `any` and prove what you receive.
+* Keep types close to where they’re used. Global types decay fast.
 
-## One pattern worth memorizing
+If a type needs a long comment to explain it, the type is badly designed.
+
+## Model real states, not wishful ones
+
+Most bugs come from pretending values always exist or are always valid.
+
+Bad:
 
 ```ts
-type Result<T> =
-  | { ok: true; value: T }
-  | { ok: false; error: string };
-
-export function parseNumber(input: string): Result<number> {
-  const n = Number(input);
-  return Number.isFinite(n) ? { ok: true, value: n } : { ok: false, error: "Not a number" };
+function getUserName(user?: { name?: string }) {
+  return user!.name!;
 }
 ```
 
+Good:
+
+```ts
+type User =
+  | { kind: "guest" }
+  | { kind: "registered"; name: string };
+
+function getUserName(user: User): string {
+  return user.kind === "registered" ? user.name : "Guest";
+}
+```
+
+Now impossible states are gone. The compiler forces you to handle reality.
+
+## One pattern worth memorizing
+
+Don’t throw exceptions for normal failure paths. Make failure part of the type.
+
+```ts
+type Result<T, E = string> =
+  | { ok: true; value: T }
+  | { ok: false; error: E };
+
+export function parseNumber(input: string): Result<number> {
+  const n = Number(input);
+  return Number.isFinite(n)
+    ? { ok: true, value: n }
+    : { ok: false, error: "Not a valid number" };
+}
+```
+
+Why this matters:
+
+* No hidden control flow
+* No try/catch soup
+* Errors become part of the contract
+* Callers must handle failure
+
+## Prefer boring, readable types
+
+Clever types feel smart today and become technical debt tomorrow.
+
+Avoid:
+
+* Deep conditional types
+* Excessive generics
+* Heavy function overloads
+
+Prefer:
+
+```ts
+type UserId = string;
+type Email = string;
+
+interface User {
+  id: UserId;
+  email: Email;
+  isActive: boolean;
+}
+```
+
+Simple wins.
+
+## Lock down your boundaries
+
+Anything coming from the outside world is untrusted until proven otherwise.
+
+```ts
+function isUser(input: unknown): input is User {
+  return (
+    typeof input === "object" &&
+    input !== null &&
+    "id" in input &&
+    "email" in input
+  );
+}
+```
+
+Validate once at the edge. Treat everything inside your app as safe and typed.
+
 ## Wrap-up
 
-The best TypeScript code reads like good documentation: clear names, predictable shapes, and errors that point you to the fix.
+Good TypeScript is boring in the best way:
+
+* Types match real business states
+* Impossible states are removed
+* Errors are explicit
+* APIs are predictable
+* Refactors don’t feel dangerous
+
+If TypeScript feels painful, your types are lying about reality — and the bugs are just proving it.

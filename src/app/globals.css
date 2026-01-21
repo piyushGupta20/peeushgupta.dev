@@ -233,4 +233,99 @@
     @apply border-b-0;
   }
 
+  /* Bouncy skill badge animation */
+  @keyframes skill-bounce {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-4px) scale(1.05);
+    }
+  }
+
+  .skill-badge {
+    animation: skill-bounce 0.6s ease-out;
+  }
+
+  /* Add spacing and push adjacent skills away on hover */
+  .skill-badge-item {
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .skill-badge-item:hover {
+    z-index: 10;
+    margin: 0 8px 8px 8px !important;
+  }
+
+  /* Push next sibling to the right */
+  .skill-badge-item:hover + .skill-badge-item {
+    transform: translateX(16px);
+  }
+
+  /* Push all following siblings slightly */
+  .skill-badge-item:hover ~ .skill-badge-item {
+    transform: translateX(8px);
+  }
+
+  /* Slow spin animation for rotating border */
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+  }
+
+  /* Rotating colorful border around avatar */
+  .avatar-rotating-border {
+    background: conic-gradient(
+      from 0deg,
+      #777,
+      #999
+    );
+    border-radius: 50%;
+    animation: spin-slow 3s linear infinite;
+    transition: background 0.3s ease;
+  }
+
+  .group:hover .avatar-rotating-border {
+    background: conic-gradient(
+      from 0deg,
+      #3b82f6,
+      #8b5cf6,
+      #ec4899,
+      #f59e0b,
+      #10b981,
+      #06b6d4,
+      #3b82f6
+    );
+  }
+
+  /* Wave animation for emoji */
+  .wave {
+    animation-name: wave-animation ;
+    animation-duration: 2.5s ;
+    animation-iteration-count: infinite ;
+    transform-origin: 70% 70% ;
+    display: inline-block;
+  }
+
+  @keyframes wave-animation {
+    0% { transform: rotate(1.5deg); }
+    10% { transform: rotate(14.0deg); }
+    20% { transform: rotate(-8.0deg); }
+    30% { transform: rotate(14.0deg); }
+    40% { transform: rotate(-4.0deg); }
+    50% { transform: rotate(10.0deg); }
+    60% { transform: rotate(0.5deg); }
+    100% { transform: rotate(1.5deg); }
+  }
+
 }
