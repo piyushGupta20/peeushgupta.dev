@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://cdn.shopify.com/s/files/1/0731/0901/2672/files/peeushgupta-dev.png?v=1769627156",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: `${DATA.name} – Open Graph Image`,
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: DATA.name,
     description: DATA.description,
-    images: ["https://cdn.shopify.com/s/files/1/0731/0901/2672/files/peeushgupta-dev.png?v=1769627156"],
+    images: ["/og-image.png"],
   },
 };
 
